@@ -17,7 +17,7 @@ const Register = () => {
     setError('');
 
     try {
-      await axios.post('http://localhost:5000/api/auth/register', { name, email, password });
+      await axios.post('https://campus-hub-2tb0.onrender.com/api/auth/register', { name, email, password });
       alert("Registration successful! Please log in.");
       navigate('/login'); 
     } catch (err) {

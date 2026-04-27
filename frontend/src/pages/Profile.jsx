@@ -22,7 +22,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/users/me', {
+        const response = await axios.get('https://campus-hub-2tb0.onrender.com/api/users/me', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setName(response.data.name || '');
@@ -50,7 +50,7 @@ const Profile = () => {
     }
 
     try {
-      await axios.put('http://localhost:5000/api/users/profile', formData, {
+      await axios.put('https://campus-hub-2tb0.onrender.com/api/users/profile', formData, {
         headers: { 
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data'

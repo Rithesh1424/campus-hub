@@ -6,8 +6,24 @@ require('dotenv').config();
 const app = express();
 
 // --- 1. MIDDLEWARE ---
-// Allows your React frontend to securely talk to this Node backend
-app.use(cors()); 
+
+// 🛡️ THE BOUNCER: Explicitly allows your live Vercel frontend
+const allowedOrigins = [
+  'http://localhost:3000', 
+  'https://campus-hub-weld.vercel.app'
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
+
 // Allows the server to read JSON data from requests
 app.use(express.json()); 
 // Allows the server to read URL-encoded data
@@ -27,7 +43,7 @@ app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/chats', require('./routes/chatRoutes'));
 
 // --- 3. HEALTH CHECK ---
-// A simple route to verify the server is alive if you visit http://localhost:5000
+// A simple route to verify the server is alive if you visit https://campus-hub-2tb0.onrender.com
 app.get('/', (req, res) => {
   res.send('✅ Campus Hub API is active and running.');
 });

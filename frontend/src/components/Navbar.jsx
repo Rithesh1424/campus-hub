@@ -12,7 +12,7 @@ const Navbar = () => {
       const token = localStorage.getItem('campusHubToken');
       if (!token) return;
       try {
-        const response = await axios.get('http://localhost:5000/api/users/me', {
+        const response = await axios.get('https://campus-hub-2tb0.onrender.com/api/users/me', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setUserData(response.data);

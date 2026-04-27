@@ -14,7 +14,7 @@ const ChatHub = () => {
 
   const fetchChats = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/chats/my-chats', { headers: { Authorization: `Bearer ${token}` } });
+      const res = await axios.get('https://campus-hub-2tb0.onrender.com/api/chats/my-chats', { headers: { Authorization: `Bearer ${token}` } });
       setChats(res.data);
       if (activeChat) {
         const updatedChat = res.data.find(c => c.id === activeChat.id);
@@ -33,7 +33,7 @@ const ChatHub = () => {
 
   const sendMessage = async (text, target = 'all') => {
     try {
-      await axios.post('http://localhost:5000/api/chats/message', 
+      await axios.post('https://campus-hub-2tb0.onrender.com/api/chats/message', 
         { chatId: activeChat.id, text, senderRole: activeChat.role, targetRole: target },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -45,7 +45,7 @@ const ChatHub = () => {
   const handleRequestBuy = async () => {
     if (!window.confirm("Ready to buy? The Admin will broker this deal securely.")) return;
     try {
-      await axios.post('http://localhost:5000/api/chats/request-buy', { chatId: activeChat.id }, { headers: { Authorization: `Bearer ${token}` } });
+      await axios.post('https://campus-hub-2tb0.onrender.com/api/chats/request-buy', { chatId: activeChat.id }, { headers: { Authorization: `Bearer ${token}` } });
       fetchChats();
     } catch (err) { alert("Failed to request buy."); }
   };
@@ -54,7 +54,7 @@ const ChatHub = () => {
   const handleCancelDeal = async () => {
     if (!window.confirm("Cancel this deal? The item will be returned to the storefront.")) return;
     try {
-      await axios.post('http://localhost:5000/api/chats/cancel', { chatId: activeChat.id }, { headers: { Authorization: `Bearer ${token}` } });
+      await axios.post('https://campus-hub-2tb0.onrender.com/api/chats/cancel', { chatId: activeChat.id }, { headers: { Authorization: `Bearer ${token}` } });
       setActiveChat(null);
       fetchChats();
     } catch (err) { alert("Failed to cancel deal."); }

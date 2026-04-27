@@ -31,7 +31,7 @@ const Sell = () => {
     formData.append('description', description);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/items', formData, {
+      const response = await axios.post('https://campus-hub-2tb0.onrender.com/api/items', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${token}`

@@ -15,12 +15,12 @@ const AdminLogin = () => {
 
     try {
       // 1. Log in normally to get the token
-      const loginRes = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+      const loginRes = await axios.post('https://campus-hub-2tb0.onrender.com/api/auth/login', { email, password });
       const token = loginRes.data.token;
       
       // 2. Immediately test if this token has Admin privileges
       try {
-        await axios.get('http://localhost:5000/api/items/admin/all', {
+        await axios.get('https://campus-hub-2tb0.onrender.com/api/items/admin/all', {
           headers: { Authorization: `Bearer ${token}` }
         });
         

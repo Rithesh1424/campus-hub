@@ -12,7 +12,7 @@ const Buy = () => {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/items');
+        const response = await axios.get('https://campus-hub-2tb0.onrender.com/api/items');
         setItems(response.data);
       } catch (error) {
         console.error("Failed to fetch items.");
@@ -33,7 +33,7 @@ const Buy = () => {
 
     try {
       // Initialize the anonymous chat
-      await axios.post('http://localhost:5000/api/chats/init', {
+      await axios.post('https://campus-hub-2tb0.onrender.com/api/chats/init', {
         itemId: item.id,
         itemName: item.name,
         sellerEmail: item.sellerEmail

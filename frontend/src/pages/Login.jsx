@@ -15,7 +15,7 @@ const Login = () => {
     setError('');
 
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+      const response = await axios.post('https://campus-hub-2tb0.onrender.com/api/auth/login', { email, password });
       
       // Save token and enter the Student Portal
       localStorage.setItem('campusHubToken', response.data.token);

@@ -18,11 +18,11 @@ const Auth = () => {
 
     try {
       if (isLogin) {
-        const res = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+        const res = await axios.post('https://campus-hub-2tb0.onrender.com/api/auth/login', { email, password });
         localStorage.setItem('campusHubToken', res.data.token);
         navigate(res.data.needsSetup ? '/setup' : '/home');
       } else {
-        const res = await axios.post('http://localhost:5000/api/auth/register', { email, password });
+        const res = await axios.post('https://campus-hub-2tb0.onrender.com/api/auth/register', { email, password });
         if (res.data.requiresOtp) setStep(2);
       }
     } catch (err) {
@@ -37,7 +37,7 @@ const Auth = () => {
     setError(''); setLoading(true);
 
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/verify', { email, otp });
+      const res = await axios.post('https://campus-hub-2tb0.onrender.com/api/auth/verify', { email, otp });
       localStorage.setItem('campusHubToken', res.data.token);
       navigate(res.data.needsSetup ? '/setup' : '/home');
     } catch (err) {
