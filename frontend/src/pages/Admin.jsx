@@ -19,38 +19,78 @@ const Admin = () => {
 
   const token = localStorage.getItem('campusHubToken');
 
- useEffect(() => {
-        const fetchAdminData = async () => {
-            try {
-                // We run both requests in parallel to save time
-                const [itemsRes, chatsRes] = await Promise.all([
-                    api.get('/items/admin/all'),
-                    api.get('/chats/admin/all')
-                ]);
-                setItems(itemsRes.data);
-                setChats(chatsRes.data);
-            } catch (err) {
-                console.error("ADMIN_DATA_FETCH_ERROR:", err);
-                // 🛡️ If the user isn't an admin, kick them out
-                if (err.response?.status === 403 || err.response?.status === 401) {
-                    alert("ACCESS DENIED: Unauthorized Credentials.");
-                    navigate('/admin');
-                } else {
-                    alert("SERVER ERROR: Could not reach the backend. Check Render logs.");
-                }
-            } finally {
-                // 🛑 THE KILL SWITCH: This ensures the loading screen 
-                // disappears even if the code above fails.
-                setLoading(false);
-            }
-        };
-        fetchAdminData();
-    }, [navigate]);
+  useEffect(() => {
+    if (!token) { window.location.href = '/admin'; return; }
+    fetchAdminData();
+    const interval = setInterval(fetchAdminData, 3000);
+    return () => clearInterval(interval);
+  }, [activeChat?.id]);
+
+  const fetchAdminData = async () => {
+    try {
+      const itemsRes = await axios.get('https://campus-hub-2tb0.onrender.com/api/items/admin/all', { headers: { Authorization: `Bearer ${token}` } });
+      setItems(itemsRes.data);
+
+      const chatsRes = await axios.get('https://campus-hub-2tb0.onrender.com/api/chats/admin/all', { headers: { Authorization: `Bearer ${token}` } });
+      setAdminChats(chatsRes.data);
+
+      if (activeChat) {
+        const updatedChat = chatsRes.data.find(c => c.id === activeChat.id);
+        if (updatedChat) setActiveChat(updatedChat);
+        else setActiveChat(null);
+      }
+      setLoading(false); // Success path
+    } catch (err) {
+      console.error("ADMIN PANEL ERROR:", err); // 🛡️ Now you can see what is actually breaking in F12
+      if (err.response?.status === 403) { 
+        alert("SECURITY ALERT: Access Denied."); 
+        window.location.href = '/'; 
+      }
+      setLoading(false); // 🛡️ THE FIX: Stop the infinite loading spinner even if there is an error
+    }
+  };
+
+  const handleAction = async (id, action) => {
+    if (!window.confirm(`Are you sure you want to ${action} this item?`)) return;
+    try { await axios.get(`https://campus-hub-2tb0.onrender.com/api/items/admin/${action}/${id}`, { headers: { Authorization: `Bearer ${token}` } }); fetchAdminData(); } catch (err) { alert(`Failed to ${action} item.`); }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("WARNING: Force delete this item?")) return;
+    try { await axios.delete(`https://campus-hub-2tb0.onrender.com/api/items/admin/${id}`, { headers: { Authorization: `Bearer ${token}` } }); fetchAdminData(); } catch (err) { alert("Failed to delete."); }
+  };
+
+  const handleAdminUpload = async (e) => {
+    e.preventDefault();
+    setUploading(true);
+    const formData = new FormData();
+    formData.append('image', file); formData.append('name', name); formData.append('price', price); formData.append('description', description);
+
+    try {
+      await axios.post('https://campus-hub-2tb0.onrender.com/api/items/admin/create', formData, { headers: { 'Content-Type': 'multipart/form-data', Authorization: `Bearer ${token}` } });
+      alert('Official Ad successfully pushed to Storefront!');
+      setName(''); setPrice(''); setDescription(''); setFile(null);
+      fetchAdminData(); setActiveTab('all');
+    } catch (err) { alert('Upload failed.'); } finally { setUploading(false); }
+  };
+
+  const sendAdminMessage = async (targetRole) => {
+    if (!adminMessage.trim() || !activeChat) return;
+    try {
+      await axios.post('https://campus-hub-2tb0.onrender.com/api/chats/message', 
+        { chatId: activeChat.id, text: adminMessage, senderRole: 'admin', targetRole },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setAdminMessage('');
+      fetchAdminData();
+    } catch (err) { alert(`Failed to message ${targetRole}.`); }
+  };
+
   // 🛑 NEW: ADMIN KILL SWITCH
   const handleDeleteChat = async (chatId) => {
     if (!window.confirm("WARNING: Terminate this chat and throw the item back onto the storefront?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/chats/admin/${chatId}`, { headers: { Authorization: `Bearer ${token}` } });
+      await axios.delete(`https://campus-hub-2tb0.onrender.com/api/chats/admin/${chatId}`, { headers: { Authorization: `Bearer ${token}` } });
       setActiveChat(null);
       fetchAdminData();
     } catch (err) { alert("Failed to terminate chat."); }
