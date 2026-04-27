@@ -1,0 +1,14 @@
+# Dependency directories
+node_modules/
+
+# Local environment variables (IMPORTANT: DO NOT REMOVE)
+.env
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Firebase service account file (if you have the json file locally)
+*.json
+!package.json
