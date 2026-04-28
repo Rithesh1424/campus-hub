@@ -12,9 +12,9 @@ exports.createItem = async (req, res) => {
       .where('sellerEmail', '==', req.user.id)
       .get();
       
-    if (userAdsSnapshot.size >= 3) {
+    if (userAdsSnapshot.size >= 5) {
       return res.status(403).json({ 
-        error: 'Limit Reached: You have used your 3 free ads! Contact admin to post more.' 
+        error: 'Limit Reached: You have used your 5 free ads! Contact admin to post more.' 
       });
     }
 
